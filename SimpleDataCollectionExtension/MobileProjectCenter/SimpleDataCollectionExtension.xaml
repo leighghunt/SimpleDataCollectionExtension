@@ -1,0 +1,18 @@
+﻿<client:ProjectExtensionControl x:Class="CustomizationSamples.SimpleDataCollectionExtension"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:client="clr-namespace:ESRI.ArcGIS.Mobile.ClientManager.Extensions;assembly=ESRI.ArcGIS.Mobile.ClientManager"
+    Height="485" Width="855" HorizontalAlignment="Stretch" 
+    HorizontalContentAlignment="Stretch" 
+    VerticalAlignment="Stretch" 
+    VerticalContentAlignment="Stretch"
+    DataContext="{Binding RelativeSource={RelativeSource Self}}">
+    <Grid Height="490" Width="860" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <Label Height="28" HorizontalAlignment="Left" Margin="24,12,0,0" Name="label1" VerticalAlignment="Top" Width="62" Foreground="Gray">Name:</Label>
+        <Label Height="28" HorizontalAlignment="Left" Margin="24,62,0,0" Name="label2" VerticalAlignment="Top" Width="87" Foreground="Gray">Description:</Label>
+        <TextBox  Margin="29,33.32,30,0" Name="NameTextBox" VerticalAlignment="Top"
+              Text="{Binding DisplayName}"/>
+        <TextBox  Margin="29,85.5,30,0" Name="DescriptionTextBox" VerticalAlignment="Top"
+              Text="{Binding Description}"/>
+    </Grid>
+</client:ProjectExtensionControl>
