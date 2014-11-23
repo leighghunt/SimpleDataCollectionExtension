@@ -17,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\..\..\..\bin\</OutputPath>
+    <OutputPath>..\Test_Geometry Collection Task\extensions\win32\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -34,12 +34,10 @@
   <ItemGroup>
     <Reference Include="ESRI.ArcGIS.Mobile, Version=3.0.0.0, Culture=neutral, PublicKeyToken=8fc3cc631e44ad86, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\Program Files\ArcGIS SDKs\bin\ESRI.ArcGIS.Mobile.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="ESRI.ArcGIS.Mobile.Client, Version=3.0.0.0, Culture=neutral, PublicKeyToken=8fc3cc631e44ad86, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\Program Files\ArcGIS SDKs\bin\ESRI.ArcGIS.Mobile.Client.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="PresentationCore">
