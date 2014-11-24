@@ -1,3 +1,5 @@
 *.suo
 *.bak
 tmp
+bin
+obj
