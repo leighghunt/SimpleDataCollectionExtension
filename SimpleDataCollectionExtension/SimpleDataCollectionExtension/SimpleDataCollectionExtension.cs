@@ -23,6 +23,10 @@ namespace CustomizationSamples
     private EditFeatureAttributesPage _editFeatureAttributesPage;
     private EditFeatureAttributesViewModel _editFeatureAttributesViewModel;
 
+    SketchGeometryCollectionMethod _sketchGeometryCollectionMethod;
+    SketchGeometryPage _sketchGP;
+    protected Feature FeatureToCreate;
+
     protected override void Initialize()
     {
     }
@@ -109,19 +113,82 @@ namespace CustomizationSamples
         _editFeatureAttributesViewModel = new EditFeatureAttributesViewModel(_feature);
         _editFeatureAttributesViewModel.CreatingGeometryCollectionMethods += new EventHandler<CreatingGeometryCollectionMethodsEventArgs>(_editFeatureAttributesViewModel_CreatingGeometryCollectionMethods);
         _editFeatureAttributesPage = new EditFeatureAttributesPage(_editFeatureAttributesViewModel);
+         
 
         _editFeatureAttributesPage.ClickOk += new EventHandler(_editFeatureAttributesPage_ClickOk);
         _editFeatureAttributesPage.ClickCancel += new EventHandler(_editFeatureAttributesPage_ClickCancel);
 
-       
-        MobileApplication.Current.Transition(_editFeatureAttributesPage);
-       
+
+        _sketchGeometryCollectionMethod = new SketchGeometryCollectionMethod();
+
+//        MobileApplication.Current.Transition(_editFeatureAttributesPage);
+        _sketchGP = new SketchGeometryPage();
+         
+        _sketchGP.ClickBack += GeometryCollectionPageClickBack;
+        _sketchGP.ClickNext += SketchGeometryCollectionMethodOnCompleted;
+                
+          MobileApplication.Current.Transition(_sketchGP);
+
+          _sketchGeometryCollectionMethod.StartGeometryCollection(_feature.Geometry);
       }
       finally
       {
         Cursor.Current = Cursors.Default;
       }
     }
+
+    void GeometryCollectionPageClickBack(object sender, EventArgs e)
+    {
+        GoToHomePage();
+    }
+
+    void SketchGeometryCollectionMethodOnCompleted(object sender, EventArgs completedEventArgs)
+    {
+        try
+        {
+
+            if (!_sketchGeometryCollectionMethod.Geometry.IsValid) return;
+
+            FeatureToCreate.Geometry = _sketchGP.Geometry;
+            // Use this if you want to go to the edit attributes page
+            if (_editFeatureAttributesPage == null)
+                _editFeatureAttributesViewModel = new EditFeatureAttributesViewModel(FeatureToCreate);
+            _editFeatureAttributesPage = new EditFeatureAttributesPage(_editFeatureAttributesViewModel);
+
+            _editFeatureAttributesPage.ClickOk += EditFeatureAttributesPageClickOk;
+            _editFeatureAttributesPage.ClickCancel += EditFeatureAttributesPageClickCancel;
+
+
+            // Pass the sketched Feature to EditFeatureAttributesPage, and transition to this page
+
+            MobileApplication.Current.Transition(_editFeatureAttributesPage);
+        }
+
+        catch (Exception ex)
+        { Helpers.MattMessage("Error going to Edit page", ex.ToString()); }
+    }
+
+    void EditFeatureAttributesPageClickOk(object sender, EventArgs e)
+    {
+        // Save the feature
+        if (!FeatureToCreate.SaveEditing())
+            ESRI.ArcGIS.Mobile.Client.Windows.MessageBox.ShowDialog("Cannot save edits.", "Warning");
+
+        // Go back to homepage
+        GoToHomePage();
+    }
+
+    void EditFeatureAttributesPageClickCancel(object sender, EventArgs e)
+    {
+        // Cancel the edits
+        FeatureToCreate.CancelEditing();
+        FeatureToCreate = null;
+        //_featureSourceInfo = null;
+
+        // Go back to homepage
+        GoToHomePage();
+    }
+
 
     void _editFeatureAttributesViewModel_CreatingGeometryCollectionMethods(object sender, CreatingGeometryCollectionMethodsEventArgs e)
     {
@@ -134,6 +201,8 @@ namespace CustomizationSamples
       foreach (GeometryCollectionMethod method in e.GeometryCollectionMethods)
         builder.AppendLine(method.Name);      
       ESRI.ArcGIS.Mobile.Client.Windows.MessageBox.ShowDialog(builder.ToString());
+
+      //e.GeometryCollectionMethods[1].StartGeometryCollection(e.GeometryCollectionMethods[1].Geometry);
     }   
     
 
