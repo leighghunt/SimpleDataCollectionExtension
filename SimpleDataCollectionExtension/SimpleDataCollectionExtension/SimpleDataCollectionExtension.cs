@@ -17,10 +17,6 @@ namespace CustomizationSamples
   //In View Map page, the extension adds a new button. By clicking the it, the application will jump to the geometry colltion page for the specified the layer.
   public class SimpleDataCollectionExtension : ProjectExtension
   {
-    //define the button name and layer name for customized data collection
-    string ButtonName = "Geometry";
-    string LayerName = "New Subtype";
-
     private IPage _homePage;
     private Feature _feature;
     private FeatureType _featureType;
@@ -51,8 +47,12 @@ namespace CustomizationSamples
           //***********************************************************
           // replace the layer name here
           //***********************************************************
-        viewMapTask.ViewMapPage.ForwardCommands.Add(new UICommand(ButtonName, 
-          param => this.CollectFireDataCommandExecute(LayerName)));
+          viewMapTask.ViewMapPage.ForwardCommands.Add(new UICommand("Add FB Split",
+            param => this.CollectFireDataCommandExecute("FB_Split", "FB_Split")));
+          
+          viewMapTask.ViewMapPage.ForwardCommands.Add(new UICommand("Add FD Location",
+            param => this.CollectFireDataCommandExecute("FD Locations", "Yes")));
+
           //***************************************************************
       }
     }
@@ -66,10 +66,11 @@ namespace CustomizationSamples
       _editFeatureAttributesPage = null;
     }
 
-    private void CollectFireDataCommandExecute(string featureTypeName)
+    private void CollectFireDataCommandExecute(string layerName, string featureTypeName)
     {
       try
       {
+
         Cursor.Current = Cursors.WaitCursor;
 
         // Cache homepage for the application
@@ -78,12 +79,29 @@ namespace CustomizationSamples
 
         // Reset _feature and _featureType
         _feature = null;
-        _featureType = FindFeatureTypeByName(featureTypeName);
+        _featureType = FindFeatureTypeByLayerAndName(layerName, featureTypeName);
         if (_featureType == null)
         {
           ESRI.ArcGIS.Mobile.Client.Windows.MessageBox.ShowDialog("Can't find " + featureTypeName + ".", "Warning");
           return;
         }
+
+        // Original checks from GPSiT code....
+        var layer = MobileApplication.Current.Project.FindFeatureSourceInfo(layerName);
+
+        if (layer == null)
+        {
+            ESRI.ArcGIS.Mobile.Client.Windows.MessageBox.ShowDialog(string.Format("The '{0}' layer is not in the map.", layerName), "Layer not found", MessageBoxButton.OK, MessageBoxImage.Warning);
+            return;
+        }
+
+        if (!layer.CanCreate)
+        {
+            ESRI.ArcGIS.Mobile.Client.Windows.MessageBox.ShowDialog(string.Format("The '{0}' layer is not editable.", layerName), "Layer not editable", MessageBoxButton.OK, MessageBoxImage.Warning);
+            return;
+        }
+
+
 
         // Create a new Feature, this will automatically call StartEditing on this feature
         _feature = new Feature(_featureType, null);
@@ -119,16 +137,20 @@ namespace CustomizationSamples
     }   
     
 
-    private FeatureType FindFeatureTypeByName(string name)
+    private FeatureType FindFeatureTypeByLayerAndName(string layerName, string name)
     {
       foreach (FeatureSourceInfo fsinfo in MobileApplication.Current.Project.EnumerateFeatureSourceInfos())
       {
-        foreach (FeatureType featureType in fsinfo.FeatureTypes)
-        {
-          if (featureType.Name.ToLower() == name.ToLower())
-            return featureType;
-        }
-
+          System.Diagnostics.Debug.WriteLine(string.Format("fsInfo.Name - : {0}", fsinfo.Name));
+          if (fsinfo.Name.ToLower() == layerName.ToLower())
+          {
+              foreach (FeatureType featureType in fsinfo.FeatureTypes)
+              {
+                  System.Diagnostics.Debug.WriteLine(string.Format("featureType.Name - : {0}", featureType.Name));
+                  if (featureType.Name.ToLower() == name.ToLower())
+                      return featureType;
+              }
+          }
       }
       return null;
     }

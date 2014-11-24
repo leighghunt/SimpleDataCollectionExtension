@@ -3,4 +3,8 @@
     <StartAction>Program</StartAction>
     <StartProgram>C:\ArcGIS\Bin\ArcGISMobile.exe</StartProgram>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <StartAction>Program</StartAction>
+    <StartProgram>c:\Program Files (x86)\ArcGIS\Mobile10.2\bin\arcGISMobile.exe</StartProgram>
+  </PropertyGroup>
 </Project>
