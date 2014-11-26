@@ -1,0 +1,10 @@
+﻿<ArcGISMobileApplication:MobileApplicationPage
+    x:Class="DevSummit2010.GeomCollection"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ArcGISMobileApplication="clr-namespace:ESRI.ArcGIS.Mobile.Client;assembly=ESRI.ArcGIS.Mobile.Client"             
+    Height="300" Width="300">
+    <Grid>
+            
+    </Grid>
+</ArcGISMobileApplication:MobileApplicationPage>
