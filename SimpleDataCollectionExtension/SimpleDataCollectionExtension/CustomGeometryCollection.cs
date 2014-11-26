@@ -23,13 +23,20 @@ namespace CustomizationSamples
       this.Name = "New Geometry Collection Demo";      
     }
 
-   
+    protected override void OnGeometryCollectionProgress(Geometry geometry, ESRI.ArcGIS.Mobile.Client.GeometryCollectionStatus status)
+    {
+        System.Diagnostics.Debug.WriteLine("OnGeometryCollectionProgress()");
+        
+        base.OnGeometryCollectionProgress(geometry, status);
+    }
 
     /// <summary>
     /// Begins the geometry collection workflow.
     /// </summary>
     protected override void GeometryCollectionStarted()
     {
+        System.Diagnostics.Debug.WriteLine("GeometryCollectionStarted()");
+        
       ESRI.ArcGIS.Mobile.Client.Windows.MessageBox.ShowDialog("Custom Geometry Collection Started");
     }
 

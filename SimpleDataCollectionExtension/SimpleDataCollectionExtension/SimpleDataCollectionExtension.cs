@@ -72,69 +72,112 @@ namespace CustomizationSamples
 
     private void CollectFireDataCommandExecute(string layerName, string featureTypeName)
     {
-      try
-      {
-
-        Cursor.Current = Cursors.WaitCursor;
-
-        // Cache homepage for the application
-        // Once data collection is done, we come back to this cached page
-        _homePage = MobileApplication.Current.CurrentPage;
-
-        // Reset _feature and _featureType
-        _feature = null;
-        _featureType = FindFeatureTypeByLayerAndName(layerName, featureTypeName);
-        if (_featureType == null)
+        try
         {
-          ESRI.ArcGIS.Mobile.Client.Windows.MessageBox.ShowDialog("Can't find " + featureTypeName + ".", "Warning");
-          return;
-        }
 
-        // Original checks from GPSiT code....
-        var layer = MobileApplication.Current.Project.FindFeatureSourceInfo(layerName);
+            Cursor.Current = Cursors.WaitCursor;
 
-        if (layer == null)
-        {
-            ESRI.ArcGIS.Mobile.Client.Windows.MessageBox.ShowDialog(string.Format("The '{0}' layer is not in the map.", layerName), "Layer not found", MessageBoxButton.OK, MessageBoxImage.Warning);
-            return;
-        }
+            // Cache homepage for the application
+            // Once data collection is done, we come back to this cached page
+            _homePage = MobileApplication.Current.CurrentPage;
 
-        if (!layer.CanCreate)
-        {
-            ESRI.ArcGIS.Mobile.Client.Windows.MessageBox.ShowDialog(string.Format("The '{0}' layer is not editable.", layerName), "Layer not editable", MessageBoxButton.OK, MessageBoxImage.Warning);
-            return;
-        }
+            // Reset _feature and _featureType
+            _feature = null;
+            _featureType = FindFeatureTypeByLayerAndName(layerName, featureTypeName);
+            if (_featureType == null)
+            {
+                ESRI.ArcGIS.Mobile.Client.Windows.MessageBox.ShowDialog("Can't find " + featureTypeName + ".", "Warning");
+                return;
+            }
+
+            // Original checks from GPSiT code....
+            var layer = MobileApplication.Current.Project.FindFeatureSourceInfo(layerName);
+
+            if (layer == null)
+            {
+                ESRI.ArcGIS.Mobile.Client.Windows.MessageBox.ShowDialog(string.Format("The '{0}' layer is not in the map.", layerName), "Layer not found", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            if (!layer.CanCreate)
+            {
+                ESRI.ArcGIS.Mobile.Client.Windows.MessageBox.ShowDialog(string.Format("The '{0}' layer is not editable.", layerName), "Layer not editable", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
 
 
 
-        // Create a new Feature, this will automatically call StartEditing on this feature
-        _feature = new Feature(_featureType, null);
+            // Create a new Feature, this will automatically call StartEditing on this feature
+            
+            _feature = new Feature(_featureType, null);
 
-        _editFeatureAttributesViewModel = new EditFeatureAttributesViewModel(_feature);
-        _editFeatureAttributesViewModel.CreatingGeometryCollectionMethods += new EventHandler<CreatingGeometryCollectionMethodsEventArgs>(_editFeatureAttributesViewModel_CreatingGeometryCollectionMethods);
-        _editFeatureAttributesPage = new EditFeatureAttributesPage(_editFeatureAttributesViewModel);
-         
-
-        _editFeatureAttributesPage.ClickOk += new EventHandler(_editFeatureAttributesPage_ClickOk);
-        _editFeatureAttributesPage.ClickCancel += new EventHandler(_editFeatureAttributesPage_ClickCancel);
+            _editFeatureAttributesViewModel = new EditFeatureAttributesViewModel(_feature);
+            _editFeatureAttributesViewModel.CreatingGeometryCollectionMethods += new EventHandler<CreatingGeometryCollectionMethodsEventArgs>(_editFeatureAttributesViewModel_CreatingGeometryCollectionMethods);
+            _editFeatureAttributesPage = new EditFeatureAttributesPage(_editFeatureAttributesViewModel);
 
 
-        _sketchGeometryCollectionMethod = new SketchGeometryCollectionMethod();
+            _editFeatureAttributesPage.ClickOk += new EventHandler(_editFeatureAttributesPage_ClickOk);
+            _editFeatureAttributesPage.ClickCancel += new EventHandler(_editFeatureAttributesPage_ClickCancel);
 
-//        MobileApplication.Current.Transition(_editFeatureAttributesPage);
-        _sketchGP = new SketchGeometryPage();
-         
-        _sketchGP.ClickBack += GeometryCollectionPageClickBack;
-        _sketchGP.ClickNext += SketchGeometryCollectionMethodOnCompleted;
+            //_editFeatureAttributesPage.GeometryEditViewModel.CurrentGeometryEditMethod.StartGeometryEdit(_feature);
+
+            _sketchGeometryCollectionMethod = new SketchGeometryCollectionMethod();
+
+            MobileApplication.Current.Transition(_editFeatureAttributesPage);
+            //return;
+
+            _sketchGP = new SketchGeometryPage();
+            
+            _sketchGP.ClickBack += GeometryCollectionPageClickBack;
+            _sketchGP.ClickNext += SketchGeometryCollectionMethodOnCompleted;
+            
+
+            //if (this.ViewModel == null || this.ViewModel.Map == null || this.ViewModel.CurrentGeometryEditMethod == null || this.MapControl.CurrentMapAction != null && !(this.MapControl.CurrentMapAction is PanMapAction) && !(this.MapControl.CurrentMapAction is SketchToolMapAction))
+      //          return;
+     
+
+            /*
+            if(_editFeatureAttributesPage.EditFeatureAttributesViewModel.GeometryEditViewModel ==null)
+            {
+                _editFeatureAttributesPage.EditFeatureAttributesViewModel.Create GeometryEditViewModel = new GeometryEditViewModel(_feature, _editFeatureAttributesViewModel_CreatingGeometryCollectionMethods);
+            }*/
+
+            //_editFeatureAttributesPage.EditFeatureAttributesViewModel.ShowGeometryEditControl();
+            //foreach (object menuItem in _editFeatureAttributesPage.MenuItems)
+           // {
+             //   System.Diagnostics.Debug.WriteLine(menuItem);
+            //}
+            //new GeometryEditControl().Start
+            //_editFeatureAttributesPage.EditFeatureAttributesViewModel.GeometryEditViewModel.
+            MobileApplication.Current.Transition(_sketchGP);
+
+            if (_feature.Geometry == null)
+            {
+                //_sketchGP.Geometry = ESRI.ArcGIS.Mobile.Geometries.Geometry.Create(layer.FeatureSource.GeometryType);
+                _editFeatureAttributesViewModel.GeometryCollectionViewModel.GeometryCollectionMethods[0].StartGeometryCollection(ESRI.ArcGIS.Mobile.Geometries.Geometry.Create(layer.FeatureSource.GeometryType));
+                //_sketchGP.
+                //_sketchGeometryCollectionMethod.StartGeometryCollection(ESRI.ArcGIS.Mobile.Geometries.Geometry.Create(layer.FeatureSource.GeometryType));
                 
-          MobileApplication.Current.Transition(_sketchGP);
+            }
+            else
+            {
+                _editFeatureAttributesViewModel.GeometryCollectionViewModel.GeometryCollectionMethods[0].StartGeometryCollection(_feature.Geometry);
+                //_sketchGeometryCollectionMethod.StartGeometryCollection(_feature.Geometry);
+            }
+            //_sketchGeometryCollectionMethod.StartGeometryCollection(_editFeatureAttributesPage.GeometryEditViewModel.Feature.Geometry);
 
-          _sketchGeometryCollectionMethod.StartGeometryCollection(_feature.Geometry);
-      }
-      finally
-      {
-        Cursor.Current = Cursors.Default;
-      }
+            if (_editFeatureAttributesViewModel.GeometryEditViewModel == null
+                || _editFeatureAttributesViewModel.GeometryEditViewModel.Map == null
+                || _editFeatureAttributesViewModel.GeometryEditViewModel.CurrentGeometryEditMethod == null)
+            {
+            }
+
+            _editFeatureAttributesViewModel.GeometryEditViewModel.Map.EnableDrawing();
+        }
+        finally
+        {
+            Cursor.Current = Cursors.Default;
+        }
     }
 
     void GeometryCollectionPageClickBack(object sender, EventArgs e)
@@ -194,12 +237,15 @@ namespace CustomizationSamples
     {
       StringBuilder builder = new StringBuilder();
       builder.AppendLine("Geometry Collection Methods:");
+      e.GeometryCollectionMethods.Clear(); // Get rid of GPS/streaming methods
       e.GeometryCollectionMethods.Add(new CustomGeometryCollection());
 
       // Look through the collection of geometry collection methods and remove
       // the GPS Averaging method.
       foreach (GeometryCollectionMethod method in e.GeometryCollectionMethods)
-        builder.AppendLine(method.Name);      
+      {
+          builder.AppendLine(method.Name);
+      }
       ESRI.ArcGIS.Mobile.Client.Windows.MessageBox.ShowDialog(builder.ToString());
 
       //e.GeometryCollectionMethods[1].StartGeometryCollection(e.GeometryCollectionMethods[1].Geometry);
