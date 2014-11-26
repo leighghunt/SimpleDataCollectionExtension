@@ -119,7 +119,7 @@ namespace CustomizationSamples
 
        
         MobileApplication.Current.Transition(_editFeatureAttributesPage);
-
+        return;
 
         //  Attempt from https://geonet.esri.com/message/174442#174442
         
@@ -147,6 +147,10 @@ namespace CustomizationSamples
               _feature.Geometry = ESRI.ArcGIS.Mobile.Geometries.Geometry.Create(layer.FeatureSource.GeometryType);
           }
           _editFeatureAttributesViewModel.GeometryCollectionViewModel.GeometryCollectionMethods[0].StartGeometryCollection(_feature.Geometry);
+          _sketchGP.ClickBack += GeometryCollectionPageClickBack;
+          _sketchGP.ClickNext += SketchGeometryCollectionMethodOnCompleted;
+          
+          MobileApplication.Current.Transition(_sketchGP);
 
         //SaveTeamInfoClass.SaveTeamInfo(_feature);  
        
