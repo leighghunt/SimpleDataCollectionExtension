@@ -127,13 +127,15 @@ namespace CustomizationSamples
     {
       StringBuilder builder = new StringBuilder();
       builder.AppendLine("Geometry Collection Methods:");
+
+        e.GeometryCollectionMethods.Clear(); // Remove other collection methods - but doesn't get rid of left panel as suggested in https://geonet.esri.com/thread/18493
       e.GeometryCollectionMethods.Add(new CustomGeometryCollection());
 
       // Look through the collection of geometry collection methods and remove
       // the GPS Averaging method.
       foreach (GeometryCollectionMethod method in e.GeometryCollectionMethods)
         builder.AppendLine(method.Name);      
-      ESRI.ArcGIS.Mobile.Client.Windows.MessageBox.ShowDialog(builder.ToString());
+      //ESRI.ArcGIS.Mobile.Client.Windows.MessageBox.ShowDialog(builder.ToString());
     }   
     
 
