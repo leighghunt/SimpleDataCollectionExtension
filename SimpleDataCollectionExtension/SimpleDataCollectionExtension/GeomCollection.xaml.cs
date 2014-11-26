@@ -12,27 +12,34 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using ESRI.ArcGIS.Mobile.Client;
+using ESRI.ArcGIS.Mobile.Client.Controls;
+using ESRI.ArcGIS.Mobile.Client.Tasks.CollectFeatures;
+using ESRI.ArcGIS.Mobile.Geometries;
 
-namespace DevSummit2010
+namespace CustomizationSamples
 {
     /// <summary>
     /// Interaction logic for GeomCollection.xaml
     /// TODO: Make the Current Namespace attribute of this file and the corresponding .xaml file 
     /// the same as all the projects in this solution
     /// </summary>
-    public partial class GeomCollection : MobileApplicationPage
+    public partial class GeometryCollectionPage : MobileApplicationPage
     {
-        public GeomCollection()
+        public GeometryCollectionPage(GeometryCollectionViewModel viewModel):this()
         {
+            this._geometryCollectionControl.GeometryCollectionViewModel = viewModel;
+        }
+
+        public GeometryCollectionPage()
+        {    
+
             InitializeComponent();
             //title
             this.Title = "Page Name";
             //Note
             this.Note = "Page Note";
 
-            /// TODO: If you change the project assembly name, replace the "DevSummit2010"
-            /// in the Uri with new assembly name.
-            Uri uri = new Uri("pack://application:,,,/DevSummit2010;Component/PageIcon72.png");
+            Uri uri = new Uri("pack://application:,,,/CustomizationSamples;PageIcon72.png");
             this.ImageSource = new System.Windows.Media.Imaging.BitmapImage(uri);
 
             // back button
@@ -44,5 +51,37 @@ namespace DevSummit2010
             MobileApplication.Current.Transition(this.PreviousPage);
         }
 
+        /// <summary>
+        /// Whether the current geometry displayed on this page is valid.
+        /// </summary>
+        public Boolean IsGeometryValid
+        {
+            get
+            {
+                GeometryCollectionViewModel viewModel = _geometryCollectionControl.GeometryCollectionViewModel;
+                GeometryCollectionMethod method = viewModel.GetCollectionMethodInProgress();
+                if (method != null && method.Geometry != null)
+                {
+                    return method.Geometry.IsValid;
+                }
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// The geometry that has been entered on this page.
+        /// </summary>
+        public ESRI.ArcGIS.Mobile.Geometries.Geometry Geometry
+        {
+            get
+            {
+                GeometryCollectionViewModel viewModel = _geometryCollectionControl.GeometryCollectionViewModel;
+                GeometryCollectionMethod method = viewModel.GetCollectionMethodInProgress();
+                if (method != null)
+                    return method.Geometry;
+                else
+                    return null;
+            }
+        }
     }
 }

@@ -24,7 +24,8 @@ namespace CustomizationSamples
     private EditFeatureAttributesViewModel _editFeatureAttributesViewModel;
 
     SketchGeometryCollectionMethod _sketchGeometryCollectionMethod;
-    SketchGeometryPage _sketchGP;
+    //SketchGeometryPage _sketchGP;
+    GeometryCollectionPage _sketchGP;
     protected Feature FeatureToCreate;
 
     protected override void Initialize()
@@ -119,28 +120,53 @@ namespace CustomizationSamples
             _editFeatureAttributesPage.ClickOk += new EventHandler(_editFeatureAttributesPage_ClickOk);
             _editFeatureAttributesPage.ClickCancel += new EventHandler(_editFeatureAttributesPage_ClickCancel);
 
-            //_editFeatureAttributesPage.GeometryEditViewModel.CurrentGeometryEditMethod.StartGeometryEdit(_feature);
 
             _sketchGeometryCollectionMethod = new SketchGeometryCollectionMethod();
 
             MobileApplication.Current.Transition(_editFeatureAttributesPage);
             //return;
 
-            _sketchGP = new SketchGeometryPage();
+            GeometryCollectionViewModel model = new GeometryCollectionViewModel(_feature, new System.Collections.ObjectModel.ObservableCollection<GeometryCollectionMethod>());
+            _sketchGP = new GeometryCollectionPage(model);
             
-            _sketchGP.ClickBack += GeometryCollectionPageClickBack;
-            _sketchGP.ClickNext += SketchGeometryCollectionMethodOnCompleted;
-            
+//            _sketchGP.ClickBack += GeometryCollectionPageClickBack;
+  //          _sketchGP.ClickNext += SketchGeometryCollectionMethodOnCompleted;
 
-            //if (this.ViewModel == null || this.ViewModel.Map == null || this.ViewModel.CurrentGeometryEditMethod == null || this.MapControl.CurrentMapAction != null && !(this.MapControl.CurrentMapAction is PanMapAction) && !(this.MapControl.CurrentMapAction is SketchToolMapAction))
-      //          return;
-     
+
+
+            MobileApplication.Current.Transition(_sketchGP);
+            
+            _sketchGeometryCollectionMethod.StartGeometryCollection(_sketchGP.Geometry);
 
             /*
+            if (_feature.Geometry == null)
+            {
+                _editFeatureAttributesViewModel.GeometryCollectionViewModel.GeometryCollectionMethods[0].StartGeometryCollection(ESRI.ArcGIS.Mobile.Geometries.Geometry.Create(layer.FeatureSource.GeometryType));
+            }
+            else
+            {
+                _editFeatureAttributesViewModel.GeometryCollectionViewModel.GeometryCollectionMethods[0].StartGeometryCollection(_feature.Geometry);
+            }
+
+            */
+
+            /*
+             *             //if (this.ViewModel == null || this.ViewModel.Map == null || this.ViewModel.CurrentGeometryEditMethod == null || this.MapControl.CurrentMapAction != null && !(this.MapControl.CurrentMapAction is PanMapAction) && !(this.MapControl.CurrentMapAction is SketchToolMapAction))
+      //          return;
+     
+            //_editFeatureAttributesPage.GeometryEditViewModel.CurrentGeometryEditMethod.StartGeometryEdit(_feature);
+
+             *             //_sketchGP.Geometry = ESRI.ArcGIS.Mobile.Geometries.Geometry.Create(layer.FeatureSource.GeometryType);
+            //_sketchGeometryCollectionMethod.StartGeometryCollection(ESRI.ArcGIS.Mobile.Geometries.Geometry.Create(layer.FeatureSource.GeometryType));
+            //_sketchGeometryCollectionMethod.StartGeometryCollection(_feature.Geometry);
+            //_sketchGeometryCollectionMethod.StartGeometryCollection(_editFeatureAttributesPage.GeometryEditViewModel.Feature.Geometry);
+
+             * 
+             * 
             if(_editFeatureAttributesPage.EditFeatureAttributesViewModel.GeometryEditViewModel ==null)
             {
                 _editFeatureAttributesPage.EditFeatureAttributesViewModel.Create GeometryEditViewModel = new GeometryEditViewModel(_feature, _editFeatureAttributesViewModel_CreatingGeometryCollectionMethods);
-            }*/
+            }
 
             //_editFeatureAttributesPage.EditFeatureAttributesViewModel.ShowGeometryEditControl();
             //foreach (object menuItem in _editFeatureAttributesPage.MenuItems)
@@ -149,30 +175,21 @@ namespace CustomizationSamples
             //}
             //new GeometryEditControl().Start
             //_editFeatureAttributesPage.EditFeatureAttributesViewModel.GeometryEditViewModel.
-            MobileApplication.Current.Transition(_sketchGP);
-
-            if (_feature.Geometry == null)
-            {
-                //_sketchGP.Geometry = ESRI.ArcGIS.Mobile.Geometries.Geometry.Create(layer.FeatureSource.GeometryType);
-                _editFeatureAttributesViewModel.GeometryCollectionViewModel.GeometryCollectionMethods[0].StartGeometryCollection(ESRI.ArcGIS.Mobile.Geometries.Geometry.Create(layer.FeatureSource.GeometryType));
-                //_sketchGP.
-                //_sketchGeometryCollectionMethod.StartGeometryCollection(ESRI.ArcGIS.Mobile.Geometries.Geometry.Create(layer.FeatureSource.GeometryType));
-                
-            }
-            else
-            {
-                _editFeatureAttributesViewModel.GeometryCollectionViewModel.GeometryCollectionMethods[0].StartGeometryCollection(_feature.Geometry);
-                //_sketchGeometryCollectionMethod.StartGeometryCollection(_feature.Geometry);
-            }
-            //_sketchGeometryCollectionMethod.StartGeometryCollection(_editFeatureAttributesPage.GeometryEditViewModel.Feature.Geometry);
-
             if (_editFeatureAttributesViewModel.GeometryEditViewModel == null
                 || _editFeatureAttributesViewModel.GeometryEditViewModel.Map == null
                 || _editFeatureAttributesViewModel.GeometryEditViewModel.CurrentGeometryEditMethod == null)
             {
             }
 
-            _editFeatureAttributesViewModel.GeometryEditViewModel.Map.EnableDrawing();
+            if (_editFeatureAttributesViewModel.GeometryCollectionViewModel == null
+                || _editFeatureAttributesViewModel.GeometryEditViewModel.Map == null
+                || _editFeatureAttributesViewModel.GeometryEditViewModel.CurrentGeometryEditMethod == null)
+            {
+            }
+
+             * */
+
+            //_editFeatureAttributesViewModel.GeometryEditViewModel.Map.EnableDrawing();
         }
         finally
         {
