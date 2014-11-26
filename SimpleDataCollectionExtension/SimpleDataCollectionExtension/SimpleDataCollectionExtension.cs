@@ -129,8 +129,8 @@ namespace CustomizationSamples
             GeometryCollectionViewModel model = new GeometryCollectionViewModel(_feature, new System.Collections.ObjectModel.ObservableCollection<GeometryCollectionMethod>());
             _sketchGP = new GeometryCollectionPage(model);
             
-//            _sketchGP.ClickBack += GeometryCollectionPageClickBack;
-  //          _sketchGP.ClickNext += SketchGeometryCollectionMethodOnCompleted;
+            //_sketchGP.ClickBack += GeometryCollectionPageClickBack;
+            //_sketchGP.ClickNext += SketchGeometryCollectionMethodOnCompleted;
 
 
 

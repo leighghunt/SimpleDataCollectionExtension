@@ -39,8 +39,8 @@ namespace CustomizationSamples
             //Note
             this.Note = "Page Note";
 
-            Uri uri = new Uri("pack://application:,,,/CustomizationSamples;PageIcon72.png");
-            this.ImageSource = new System.Windows.Media.Imaging.BitmapImage(uri);
+            //Uri uri = new Uri("pack://application:,,,/CustomizationSamples;PageIcon72.png");
+            //this.ImageSource = new System.Windows.Media.Imaging.BitmapImage(uri);
 
             // back button
             this.BackCommands.Add(this.BackCommand);
