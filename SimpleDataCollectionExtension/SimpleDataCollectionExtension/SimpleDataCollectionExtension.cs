@@ -23,6 +23,10 @@ namespace CustomizationSamples
     private EditFeatureAttributesPage _editFeatureAttributesPage;
     private EditFeatureAttributesViewModel _editFeatureAttributesViewModel;
 
+    SketchGeometryCollectionMethod _sketchGeometryCollectionMethod;
+    SketchGeometryPage _sketchGP;
+    protected Feature FeatureToCreate;
+
     protected override void Initialize()
     {
     }
@@ -115,6 +119,36 @@ namespace CustomizationSamples
 
        
         MobileApplication.Current.Transition(_editFeatureAttributesPage);
+
+
+        //  Attempt from https://geonet.esri.com/message/174442#174442
+        
+          // If this is the first time, create a SketchGeometryCollectionMethod,   
+        // and listen to its Completed event. Once user accepts geometry, this event  
+        // will be fired  
+        if (_sketchGeometryCollectionMethod == null)
+        {
+            _sketchGeometryCollectionMethod = new SketchGeometryCollectionMethod();
+            //_sketchGeometryCollectionMethod.Completed += new EventHandler<CompletedEventArgs>(_sketchGeometryCollectionMethod_Completed);
+        }
+
+        _sketchGP = new SketchGeometryPage();
+
+        //_sketchGeometryCollectionMethod.GeometryCollectionPage.Title = "Collect " + _featureType.Name;
+        //_sketchGeometryCollectionMethod.GeometryCollectionPage.Note = "Create " + _featureType.Name + " by digitizing on the map";
+
+        //_sketchGeometryCollectionMethod.StartGeometryCollection(_feature);
+
+          _sketchGP.Title = "Collect " + _featureType.Name;
+          _sketchGP.Note = "Create " + _featureType.Name + " by digitizing on the map";
+
+          if (_feature.Geometry == null)
+          {
+              _feature.Geometry = ESRI.ArcGIS.Mobile.Geometries.Geometry.Create(layer.FeatureSource.GeometryType);
+          }
+          _editFeatureAttributesViewModel.GeometryCollectionViewModel.GeometryCollectionMethods[0].StartGeometryCollection(_feature.Geometry);
+
+        //SaveTeamInfoClass.SaveTeamInfo(_feature);  
        
       }
       finally
@@ -123,12 +157,63 @@ namespace CustomizationSamples
       }
     }
 
+    void GeometryCollectionPageClickBack(object sender, EventArgs e)
+    {
+        GoToHomePage();
+    }
+
+    void SketchGeometryCollectionMethodOnCompleted(object sender, EventArgs completedEventArgs)
+    {
+        try
+        {
+
+            if (!_sketchGeometryCollectionMethod.Geometry.IsValid) return;
+
+            FeatureToCreate.Geometry = _sketchGP.Geometry;
+            // Use this if you want to go to the edit attributes page
+            if (_editFeatureAttributesPage == null)
+                _editFeatureAttributesViewModel = new EditFeatureAttributesViewModel(FeatureToCreate);
+            _editFeatureAttributesPage = new EditFeatureAttributesPage(_editFeatureAttributesViewModel);
+
+            _editFeatureAttributesPage.ClickOk += EditFeatureAttributesPageClickOk;
+            _editFeatureAttributesPage.ClickCancel += EditFeatureAttributesPageClickCancel;
+
+
+            // Pass the sketched Feature to EditFeatureAttributesPage, and transition to this page
+
+            MobileApplication.Current.Transition(_editFeatureAttributesPage);
+        }
+
+        catch (Exception ex)
+        { Helpers.MattMessage("Error going to Edit page", ex.ToString()); }
+    }
+
+    void EditFeatureAttributesPageClickOk(object sender, EventArgs e)
+    {
+        // Save the feature
+        if (!FeatureToCreate.SaveEditing())
+            ESRI.ArcGIS.Mobile.Client.Windows.MessageBox.ShowDialog("Cannot save edits.", "Warning");
+
+        // Go back to homepage
+        GoToHomePage();
+    }
+
+    void EditFeatureAttributesPageClickCancel(object sender, EventArgs e)
+    {
+        // Cancel the edits
+        FeatureToCreate.CancelEditing();
+        FeatureToCreate = null;
+        //_featureSourceInfo = null;
+
+        // Go back to homepage
+        GoToHomePage();
+    }
+
     void _editFeatureAttributesViewModel_CreatingGeometryCollectionMethods(object sender, CreatingGeometryCollectionMethodsEventArgs e)
     {
       StringBuilder builder = new StringBuilder();
       builder.AppendLine("Geometry Collection Methods:");
-
-        e.GeometryCollectionMethods.Clear(); // Remove other collection methods - but doesn't get rid of left panel as suggested in https://geonet.esri.com/thread/18493
+      e.GeometryCollectionMethods.Clear(); // Get rid of GPS/streaming methods
       e.GeometryCollectionMethods.Add(new CustomGeometryCollection());
 
       // Look through the collection of geometry collection methods and remove
