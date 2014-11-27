@@ -73,6 +73,7 @@
     <Compile Include="GeomCollection.xaml.cs">
       <DependentUpon>GeomCollection.xaml</DependentUpon>
     </Compile>
+    <Compile Include="GeomCollection2.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="SimpleDataCollectionExtension.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

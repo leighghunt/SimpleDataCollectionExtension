@@ -25,7 +25,7 @@ namespace CustomizationSamples
 
     SketchGeometryCollectionMethod _sketchGeometryCollectionMethod;
     //SketchGeometryPage _sketchGP;
-    GeometryCollectionPage _sketchGP;
+    GeometryCollection2 _sketchGP;
     protected Feature FeatureToCreate;
 
     protected override void Initialize()
@@ -127,7 +127,7 @@ namespace CustomizationSamples
             //return;
 
             GeometryCollectionViewModel model = new GeometryCollectionViewModel(_feature, new System.Collections.ObjectModel.ObservableCollection<GeometryCollectionMethod>());
-            _sketchGP = new GeometryCollectionPage(model);
+            _sketchGP = new GeometryCollection2(model);
             
             //_sketchGP.ClickBack += GeometryCollectionPageClickBack;
             //_sketchGP.ClickNext += SketchGeometryCollectionMethodOnCompleted;
